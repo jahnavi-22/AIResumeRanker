@@ -11,8 +11,10 @@ kb = KeyBERT()
 
 
 def clean_text(text: str) -> str:
-    text: re.sub(r'[^a-z\s]', ' ', text)
-    return text.lower()
+    text = text.lower()
+    text = re.sub(r'[^a-z\s]', ' ', text)
+    text = text.strip()
+    return text
 
 
 def extract_rake_keywords(text: str, max_keywords=15):
@@ -35,21 +37,28 @@ def extract_spacy_noun_phrases(text: str, max_phrases=15):
     return noun_phrases[:max_phrases]
 
 
+#Combine keywords from KeyBERT and RAKE and noun phrases from SpaCy into a unique set
 def get_combined_words(text: str):
     text = clean_text(text)
     keywords = set()
     keywords.update(extract_keybert_words(text))
-    keywords.update(extract_keybert_words(text))
+    keywords.update(extract_rake_keywords(text))
     keywords.update(extract_spacy_noun_phrases(text))
     return list(keywords)
 
 
+#Convert list of keywords into vector embeddings using KeyBERT's model
 def embed_keywords(keywords: list):
     if not keywords:
         return numpy.array([])
     return kb.model.encode(keywords)
 
 
+# Calculate semantic similarity score between job description keywords and resume keywords
+# Returns:
+#   - score as percentage of matched keywords
+#   - list of matched keywords
+#   - list of missing keywords
 def semantic_match_score(jd_keywords, resume_keywords, threshold=0.75):
     jd_embeddings = embed_keywords(jd_keywords)
     resume_embeddings = embed_keywords(resume_keywords)
