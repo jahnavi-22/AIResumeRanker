@@ -31,6 +31,7 @@ def rank_resumes(request: ResumeRequest):
     # Score each resume against JD
     for i, resume_text in enumerate(resumes):
         resume_keywords = scorer.get_combined_words(resume_text)
+        print(f"Resume {i} keywords:", resume_keywords)
         score, matched_keywords, missing_keywords = scorer.semantic_match_score(jd_keywords, resume_keywords)
 
         scored_resumes.append({

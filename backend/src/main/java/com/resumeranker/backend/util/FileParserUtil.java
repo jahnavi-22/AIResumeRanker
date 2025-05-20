@@ -1,6 +1,5 @@
 package com.resumeranker.backend.util;
 
-import org.apache.james.mime4j.dom.Multipart;
 import org.apache.tika.Tika;
 import org.apache.tika.exception.TikaException;
 import org.springframework.web.multipart.MultipartFile;

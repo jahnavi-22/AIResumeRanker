@@ -1,21 +1,26 @@
 package com.resumeranker.backend.service;
 
+import com.resumeranker.backend.model.ResumeRequest;
 import com.resumeranker.backend.model.ResumeResponse;
 import com.resumeranker.backend.util.FileParserUtil;
 import org.apache.tika.exception.TikaException;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.Objects;
 
 @Service
 public class ResumeProcessingService {
 
-    public List<ResumeResponse> process(MultipartFile jdFile, List<MultipartFile> resumeFiles){
+    private final RestTemplate restTemplate = new RestTemplate();
+    private final String mlServiceUrl = "http://localhost:8000/rank";
+
+    public List<ResumeResponse> process(String jobId, MultipartFile jdFile, List<MultipartFile> resumeFiles){
         String jdText;
         try{
             jdText = FileParserUtil.extractText(jdFile);
@@ -23,24 +28,28 @@ public class ResumeProcessingService {
             throw new RuntimeException("Error processing job description file", e);
         }
 
-        List<ResumeResponse> responses = new ArrayList<>();
-        for(MultipartFile resume : resumeFiles){
-            String resumeText;
-            try{
-                resumeText = FileParserUtil.extractText(resume);
-            } catch(IOException | TikaException e){
-//                throw new RuntimeException("Error processing resume file", e);
-                continue;
+        List<String> resumeTexts = new ArrayList<>();
+        for (MultipartFile resume : resumeFiles) {
+            try {
+                resumeTexts.add(FileParserUtil.extractText(resume));
+            } catch (IOException | TikaException e) {
+                throw new RuntimeException("Error processing resume file", e);
             }
-
-            //mocked response for phase 1b
-            ResumeResponse response = new ResumeResponse();
-            response.setName(resume.getOriginalFilename());
-            response.setScore(new Random().nextInt(100)); // Mock scoring between 0-99
-            response.setMatchedSkills(List.of("Java", "Spring Boot"));
-            response.setMissingSkills(List.of("Docker", "Kubernetes"));
-            responses.add(response);
         }
-        return responses;
+
+        ResumeRequest request = new ResumeRequest();
+        request.setJobId(jobId);
+        request.setJobDescription(jdText);
+        request.setResumeTexts(resumeTexts);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<ResumeRequest> entity = new HttpEntity<>(request, headers);
+
+        ResponseEntity<ResumeResponse[]> response = restTemplate.exchange(
+                mlServiceUrl, HttpMethod.POST, entity, ResumeResponse[].class
+        );
+
+        return List.of(Objects.requireNonNull(response.getBody()));
     }
 }
