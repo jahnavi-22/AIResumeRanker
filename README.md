@@ -7,8 +7,9 @@ This project contains two main components:
 
 - **Backend:** Java Spring Boot REST API service
 - **ML Service:** Python FastAPI service for resume scoring and ranking resumes
+- **Frontend:** React.js application for user interaction  
 
-These two services run separately and communicate via REST APIs.
+These two services run separately and communicate via REST APIs. The frontend connects with the backend to provide a user interface.
 
 ---
 
@@ -16,7 +17,7 @@ These two services run separately and communicate via REST APIs.
 
 - Java 17 installed and configured
 - Python 3.11 installed
-- Python `venv` module available (usually included with Python)
+- Node.js and npm installed (for frontend)  
 - Gradle wrapper included in backend (`./gradlew`)
 
 ---
@@ -41,6 +42,16 @@ The backend service will start (default port 8080).
 5. Start the ML service: uvicorn app.main:app --reload
 
 The ML service will start at `http://127.0.0.1:8000`.
+
+--
+
+## Frontend Setup
+
+1. Open a terminal and navigate to the frontend directory: cd frontend
+2. Install dependencies: npm install
+3. Start the frontend development server: npm start
+ 
+The React app will run at http://localhost:3000.
 
 ---
 
