@@ -1,15 +1,22 @@
 
 # AI Resume Ranker
+<img width="1727" alt="Screenshot 2025-05-21 at 6 39 24 PM" src="https://github.com/user-attachments/assets/957e4b0c-8932-4a73-bbc5-d79e49437cdf" />
 
 ## Overview
+The AI Resume Ranker is a full-stack application designed to help recruiters and job seekers efficiently evaluate resumes against job descriptions using AI-powered scoring and ranking.
 
-This project contains two main components:
+It consists of three main components:
 
-- **Backend:** Java Spring Boot REST API service
-- **ML Service:** Python FastAPI service for resume scoring and ranking resumes
-- **Frontend:** React.js application for user interaction  
+- **Backend (Java Spring Boot):**  
+  This REST API service manages core application logic, including receiving resume files and job descriptions, parsing content, communicating with the ML service for scoring, and returning ranked results to the frontend.
 
-These two services run separately and communicate via REST APIs. The frontend connects with the backend to provide a user interface.
+- **ML Service (Python FastAPI):**  
+  This microservice leverages advanced natural language processing and machine learning techniques to analyze the textual content of resumes and job descriptions. It extracts relevant keywords, computes similarity scores, and ranks the resumes based on their match to the job requirements.
+
+- **Frontend (React.js):**  
+  A user-friendly web interface that allows users to upload resumes and job descriptions, view ranked results, and get detailed feedback on skills matched or missing in the resumes.
+
+These components work together by communicating via REST APIs. The separation allows the ML service to evolve independently with new AI models, while the backend handles data processing and security, and the frontend focuses on a smooth user experience.
 
 ---
 
