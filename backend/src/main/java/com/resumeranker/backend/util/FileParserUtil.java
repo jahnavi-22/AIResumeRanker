@@ -5,6 +5,7 @@ import org.apache.tika.exception.TikaException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 public class FileParserUtil {
 
@@ -12,6 +13,10 @@ public class FileParserUtil {
 
     public static String extractText(MultipartFile file) throws TikaException, IOException {
         return tika.parseToString(file.getInputStream());
+    }
+
+    public static String extractText(InputStream stream) throws IOException, TikaException {
+        return tika.parseToString(stream);
     }
 }
 

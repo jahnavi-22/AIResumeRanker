@@ -1,12 +1,15 @@
 package com.resumeranker.backend.controller;
 
+import com.resumeranker.backend.model.ResumeRequest;
 import com.resumeranker.backend.model.ResumeResponse;
 import com.resumeranker.backend.service.ResumeProcessingService;
+import org.apache.tika.exception.TikaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -19,11 +22,22 @@ public class UploadController {
 
     @PostMapping("/upload")
     public ResponseEntity<List<ResumeResponse>> uploadResumes(
-            @RequestParam("jobId") String jobId,
-            @RequestParam("jdFile") MultipartFile jdFile,
-            @RequestParam("resumeFiles") List<MultipartFile> resumeFiles) {
+            @RequestParam(required = false) String jobId,
+            @RequestParam(required = false) String jdText,
+            @RequestParam(required = false) MultipartFile jdFile,
+            @RequestParam(required = false) String jdUrl,
+            @RequestParam(required = false) List<MultipartFile> resumeFiles,
+            @RequestParam(required = false) List<String> resumeUrls) throws TikaException, IOException {
 
-        List<ResumeResponse> responses = resumeService.process(jobId, jdFile, resumeFiles);
+        ResumeRequest request = new ResumeRequest();
+        request.setJobId(jobId);
+        request.setJdText(jdText);
+        request.setJdFile(jdFile);
+        request.setJdUrl(jdUrl);
+        request.setResumeFiles(resumeFiles);
+        request.setResumeUrls(resumeUrls);
+
+        List<ResumeResponse> responses = resumeService.process(request);
         return ResponseEntity.ok(responses);
     }
 }

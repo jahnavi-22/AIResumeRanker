@@ -1,12 +1,20 @@
 package com.resumeranker.backend.model;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Data
 public class ResumeRequest {
     private String jobId;
-    private String jobDescription;
-    private List<String> resumeTexts;
+
+    //Job Description input
+    private String jdText;
+    private MultipartFile jdFile;
+    private String jdUrl;
+
+    //Resume input
+    private List<MultipartFile> resumeFiles;
+    private List<String> resumeUrls;
 }
