@@ -69,14 +69,15 @@ public class ResumeProcessingService {
         try{
             if(request.getJdText() != null)
                 return request.getJdText();
-            if(request.getJdFile() != null)
+            else if(request.getJdFile() != null)
                 return FileParserUtil.extractText(request.getJdFile());
-            if(request.getJdUrl() != null){
+            else if(request.getJdUrl() != null){
                 InputStream stream = FileDownloaderUtil.downloadFile(request.getJdUrl());
                 return FileParserUtil.extractText(stream);
             }
         }catch(Exception e){
             throw new RuntimeException("Error processing job description", e);
         }
+        return "Empty JD";
     }
 }

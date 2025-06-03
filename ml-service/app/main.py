@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from typing import List
 from app.model import ResumeRequest, ResumeResponse
 import app.scorer as scorer
+import app.extractor as extractor
 
 app = FastAPI()
 
@@ -25,12 +26,13 @@ def rank_resumes(request: ResumeRequest):
 
     total = len(resumes)
 
-    jd_keywords = scorer.get_combined_words(jd)
+    jd_keywords = extractor.extract_keywords(jd)
     scored_resumes = []
 
     # Score each resume against JD
     for i, resume_text in enumerate(resumes):
-        resume_keywords = scorer.get_combined_words(resume_text)
+        resume_keywords = extractor.extract_keywords(resume_text)
+        resume_details = extractor.extract_resume_details(resume_text)
         print(f"Resume {i} keywords:", resume_keywords)
         score, matched_keywords, missing_keywords = scorer.semantic_match_score(jd_keywords, resume_keywords)
 
@@ -38,7 +40,8 @@ def rank_resumes(request: ResumeRequest):
             "index": i,
             "score": round(score, 2),
             "matched": matched_keywords,
-            "missing": missing_keywords
+            "missing": missing_keywords,
+            "details": resume_details
         })
 
     # Sort resumes by score (highest first)
@@ -50,14 +53,32 @@ def rank_resumes(request: ResumeRequest):
     # Build final response list
     responses = []
     for r in scored_resumes:
+        d = r["details"]
         responses.append(ResumeResponse(
-            name=f"Resume {r['index'] + 1}",
+            name=d.get("name", f"Resume {r['index'] + 1}"),
             score=r["score"],
-            matchedSkills=r["matched"],
-            missingSkills=r["missing"],
             rank=index_to_rank[r["index"]],
             total=total,
-            topScores=top_scores
+            topScores=top_scores,
+            matchedSkills=r["matched"],
+            missingSkills=r["missing"],
+            summary=d.get("summary", ""),
+            highlights=d.get("highlights", []),
+            education=d.get("education", []),
+            experiences=d.get("experience", []),
+            skills=d.get("skills", []),
+            certifications=d.get("certifications", []),
+            projects=d.get("projects", []),
+            experienceRelevanceScore=d.get("experienceRelevanceScore", 0.0),
+            seniorityLevel=d.get("seniorityLevel", ""),
+            careerTrajectory=d.get("careerTrajectory", ""),
+            experienceHighlights=d.get("experienceHighlights", []),
+            impactHighlights=d.get("impactHighlights", []),
+            projectHighlights=d.get("projectHighlights", []),
+            generatedSummary=d.get("generatedSummary", ""),
+            atsScore=d.get("atsScore", 0.0),
+            atsFeedback=d.get("atsFeedback", []),
+            contact=d.get("contact", {}),
         ))
 
     return responses

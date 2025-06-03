@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Optional
 
 
 class ResumeRequest(BaseModel):
@@ -11,8 +11,32 @@ class ResumeRequest(BaseModel):
 class ResumeResponse(BaseModel):
     name: str
     score: float
-    matchedSkills: List[str]
-    missingSkills: List[str]
     rank: int
     total: int
     topScores: List[float]
+
+    matchedSkills: List[str]
+    missingSkills: List[str]
+
+    summary: str
+    highlights: List[str]
+    education: List[str]
+    experience: List[str]
+    skills: List[str]
+    certifications: List[str]
+    projects: List[str]
+
+    experienceRelevanceScore: float
+    seniorityLevel: str
+    careerTrajectory: str
+
+    experienceHighlights: List[str]
+    impactHighlights: List[str]
+    projectHighlights: List[str]
+
+    generatedSummary: str
+
+    atsScore: float
+    atsFeedback: List[str]
+
+    contact: List[str]
