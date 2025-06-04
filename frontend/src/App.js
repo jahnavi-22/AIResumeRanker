@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ResumeCard from "./components/ResumeCard";
 import "./App.css";
 
 function App() {
@@ -143,42 +144,7 @@ function App() {
             <h2>Analysis Results</h2>
             <div className="results-grid">
               {results.map((result, index) => (
-                <div key={index} className="result-card">
-                  <div className="result-header">
-                    <h3>{result.name}</h3>
-                    <div className="score-badge">
-                      Score: {result.score}%
-                    </div>
-                  </div>
-                  <div className="result-details">
-                    <div className="detail-item">
-                      <span className="detail-label">Rank:</span>
-                      <span className="detail-value">
-                        {result.rank}/{result.total}
-                      </span>
-                    </div>
-                    <div className="detail-item">
-                      <span className="detail-label">Matched Skills:</span>
-                      <div className="skills-list">
-                        {result.matchedSkills.map((skill, i) => (
-                          <span key={i} className="skill-tag matched">
-                            {skill}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="detail-item">
-                      <span className="detail-label">Missing Skills:</span>
-                      <div className="skills-list">
-                        {result.missingSkills.map((skill, i) => (
-                          <span key={i} className="skill-tag missing">
-                            {skill}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <ResumeCard key={index} result={result} />
               ))}
             </div>
           </section>

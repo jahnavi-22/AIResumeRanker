@@ -17,7 +17,6 @@ public class ResumeResponse {
     private List<String> missingSkills;
 
     private String summary;
-    private List<String> highlights;
 
     private List<String> education;
     private List<String> experiences;
@@ -32,8 +31,6 @@ public class ResumeResponse {
     private List<String> experienceHighlights;
     private List<String> impactHighlights;
     private List<String> projectHighlights;
-
-    private String generatedSummary;
 
     private double atsScore;
     private List<String> atsFeedback;

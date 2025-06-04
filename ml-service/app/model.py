@@ -19,7 +19,6 @@ class ResumeResponse(BaseModel):
     missingSkills: List[str]
 
     summary: str
-    highlights: List[str]
     education: List[str]
     experiences: List[str]
     skills: List[str]
@@ -33,8 +32,6 @@ class ResumeResponse(BaseModel):
     experienceHighlights: List[str]
     impactHighlights: List[str]
     projectHighlights: List[str]
-
-    generatedSummary: str
 
     atsScore: float
     atsFeedback: List[str]
