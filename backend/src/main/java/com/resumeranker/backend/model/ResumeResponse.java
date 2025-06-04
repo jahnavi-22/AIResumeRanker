@@ -38,5 +38,5 @@ public class ResumeResponse {
     private double atsScore;
     private List<String> atsFeedback;
 
-    private List<String> contact;
+    private Map<String, String> contact;
 }

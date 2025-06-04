@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List, Optional
+from typing import List, Optional, Dict
 
 
 class ResumeRequest(BaseModel):
@@ -21,7 +21,7 @@ class ResumeResponse(BaseModel):
     summary: str
     highlights: List[str]
     education: List[str]
-    experience: List[str]
+    experiences: List[str]
     skills: List[str]
     certifications: List[str]
     projects: List[str]
@@ -39,4 +39,4 @@ class ResumeResponse(BaseModel):
     atsScore: float
     atsFeedback: List[str]
 
-    contact: List[str]
+    contact: Dict[str, Optional[str]]
