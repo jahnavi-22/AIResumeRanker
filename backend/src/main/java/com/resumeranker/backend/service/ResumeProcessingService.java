@@ -14,8 +14,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
+import java.io.ByteArrayOutputStream;
+
 @Service
 public class ResumeProcessingService {
+
+    private final Map<String, List<ResumeResponse>> jobResults = new HashMap<>();
 
     private final RestTemplate restTemplate = new RestTemplate();
     private final String mlServiceUrl = "http://localhost:8000/rank";
@@ -62,7 +67,10 @@ public class ResumeProcessingService {
                 mlServiceUrl, HttpMethod.POST, entity, ResumeResponse[].class
         );
 
-        return List.of(Objects.requireNonNull(response.getBody()));
+        List<ResumeResponse> responses = List.of(Objects.requireNonNull(response.getBody()));
+        jobResults.put(request.getJobId(), responses);
+        return responses;
+
     }
 
     private String extractJobDescription(ResumeRequest request) throws TikaException, IOException {
@@ -79,5 +87,63 @@ public class ResumeProcessingService {
             throw new RuntimeException("Error processing job description", e);
         }
         return "Empty JD";
+    }
+
+    public List<ResumeResponse> getResultsForJob(String jobId){
+        return jobResults.get(jobId);
+    }
+
+    public byte[] generateResultsPDF(String jobId){
+        List<ResumeResponse> responses = getResultsForJob(jobId);
+        if(responses == null || responses.isEmpty())
+            throw new IllegalArgumentException("No results found for job ID: " + jobId);
+
+        StringBuilder html = new StringBuilder();
+        html.append("<html><head><style>")
+                .append("body { background-color: #0c1b3a; color: #FFD93D; font-family: 'Press Start 2P', monospace; font-size: 8px; }")
+                .append("h1 { font-size: 12px; text-align: center; color: #FFD93D; text-shadow: 2px 2px #000000; }")
+                .append("h2 { font-size: 10px; color: #7FDBFF; text-align: center; text-shadow: 1px 1px #000000; }")
+                .append("div.resume-card { border: 2px solid #F24E1E; padding: 10px; margin: 10px; background-color: #12264d; box-shadow: 4px 4px #000; }")
+                .append("b { color: #F24E1E; }")
+                .append("</style></head><body>");
+
+        html.append("<h1>🎮 SKILL QUEST RANKINGS 🎮</h1>");
+        html.append("<h2>Results for Job ID: ").append(jobId).append("</h2>");
+
+        for (ResumeResponse r : responses) {
+            html.append("<div class='resume-card'>")
+                    .append("<b>Rank #").append(r.getRank()).append(" — ").append(r.getName()).append("</b><br/>")
+                    .append("# Score: ").append(r.getScore()).append("<br/>")
+                    .append("# Matched Skills:<br/>")
+                    .append("<ul>");
+
+            for (String skill : r.getMatchedSkills()) {
+                html.append("<li>").append(skill).append("</li>");
+            }
+
+            html.append("</ul>")
+                    .append("# Missing Skills:<br/>")
+                    .append("<ul>");
+
+            for (String skill : r.getMissingSkills()) {
+                html.append("<li>").append(skill).append("</li>");
+            }
+
+            html.append("</ul>")
+                    .append("</div>");
+        }
+
+        html.append("</body></html>");
+
+
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            PdfRendererBuilder builder = new PdfRendererBuilder();
+            builder.withHtmlContent(html.toString(), null);
+            builder.toStream(out);
+            builder.run();
+            return out.toByteArray();
+        } catch (Exception e) {
+            throw new RuntimeException("PDF generation failed", e);
+        }
     }
 }

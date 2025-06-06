@@ -20,6 +20,7 @@ def extract_resume_details(text: str) -> dict:
         "Use the exact key names and data types as specified.\n"
         "Do not add any explanations or extra text.\n\n"
         "Fields and expected formats:\n"
+        "- name: string (full name of the candidate)\n"
         "- contact: dict with keys 'email' (string or null), 'phone' (string or null), 'linkedin' (string or null)\n"
         "- summary: string (brief professional summary)\n"
         "- education: list of strings (each is a degree or qualification)\n"
@@ -33,11 +34,11 @@ def extract_resume_details(text: str) -> dict:
         "- experienceHighlights: list of strings\n"
         "- impactHighlights: list of strings\n"
         "- projectHighlights: list of strings\n"
-        "- atsScore: float (scale 1.0 to 10.0)\n"
-        "- atsFeedback: list of strings\n\n"
+        "- atsCompatibilityScore: float (scale 1.0 to 10.0)\n"
         f"Resume Text:\n{text}\n\n"
         "Example output:\n"
         "{\n"
+        "  'name': 'John Doe',\n"
         "  'contact': {'email': 'john@example.com', 'phone': '+123456789', 'linkedin': 'linkedin.com/in/johndoe'},\n"
         "  'summary': 'Experienced backend developer...',\n"
         "  'education': ['B.Sc Computer Science, XYZ University, 2018'],\n"
@@ -51,8 +52,7 @@ def extract_resume_details(text: str) -> dict:
         "  'experienceHighlights': ['Led migration to microservices', 'Implemented CI/CD pipelines'],\n"
         "  'impactHighlights': ['Increased uptime by 20%', 'Cut API response time in half'],\n"
         "  'projectHighlights': ['Designed scalable chat service', 'Optimized database queries'],\n"
-        "  'atsScore': 7.9,\n"
-        "  'atsFeedback': ['Use standard section headers', 'Avoid images']\n"
+        "  'atsCompatibilityScore': 7.9,\n"
         "}"
     )
 
@@ -73,7 +73,7 @@ def extract_resume_details(text: str) -> dict:
 
 def extract_keywords(text: str) -> list:
     prompt = (
-        "Extract the key technical and professional keywords from this text.\n"
+        "Extract the key technical and professional keywords from this text. Max keywords: 15.\n"
         "Return a Python list of keywords, no extra text.\n\n"
         f"Text:\n{text}"
     )

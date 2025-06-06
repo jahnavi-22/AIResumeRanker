@@ -33,7 +33,6 @@ class ResumeResponse(BaseModel):
     impactHighlights: List[str]
     projectHighlights: List[str]
 
-    atsScore: float
-    atsFeedback: List[str]
+    atsCompatibilityScore: float
 
     contact: Dict[str, Optional[str]]

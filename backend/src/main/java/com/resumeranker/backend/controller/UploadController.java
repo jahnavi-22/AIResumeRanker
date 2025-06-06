@@ -5,6 +5,7 @@ import com.resumeranker.backend.model.ResumeResponse;
 import com.resumeranker.backend.service.ResumeProcessingService;
 import org.apache.tika.exception.TikaException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,5 +40,14 @@ public class UploadController {
 
         List<ResumeResponse> responses = resumeService.process(request);
         return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/download")
+    public ResponseEntity<byte[]> downloadResultsPDF(@RequestParam String jobId){
+        byte[] pdf = resumeService.generateResultsPDF(jobId);
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=Results-" + jobId + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(pdf);
     }
 }

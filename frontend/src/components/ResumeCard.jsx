@@ -12,18 +12,29 @@ const ResumeCard = ({ result }) => {
         <div className="nested-expandable">
           <h4 className="section-title">{title}</h4>
           <div className="section-content">
-            {Object.entries(content).map(([key, value]) => (
-              <div key={key}>
-                <strong>{key.charAt(0).toUpperCase() + key.slice(1)}:</strong>{" "}
-                {String(value)}
-              </div>
-            ))}
+            {Object.entries(content).map(([key, value]) => {
+              const displayValue =
+                value === null || value === undefined || value === ""
+                  ? "Not provided"
+                  : String(value);
+              return (
+                <div key={key}>
+                  <strong>{key.charAt(0).toUpperCase() + key.slice(1)}:</strong>{" "}
+                  {displayValue}
+                </div>
+              );
+            })}
           </div>
         </div>
       );
     }
 
-    const contentStr = Array.isArray(content) ? content.join("\n") : String(content);
+    const contentStr =
+      content === null || content === undefined || content === ""
+        ? "Not provided"
+        : Array.isArray(content)
+        ? content.join("\n")
+        : String(content);
 
     return (
       <div className="nested-expandable">
@@ -36,6 +47,7 @@ const ResumeCard = ({ result }) => {
       </div>
     );
   };
+
 
 
 
@@ -58,12 +70,14 @@ const ResumeCard = ({ result }) => {
   return (
     <div className="resume-card">
       <div className="card-header">
-        <span className="rank">#{result.rank}</span>
-        <span className="name">{result.name}</span>
-        <span className="score">Score: {result.score}</span>
-        <button className="expand-button" onClick={() => setExpanded(!expanded)}>
-          {expanded ? "Hide Details" : "View Details"}
-        </button>
+        <div className="header-grid">
+          <span className="rank">#{result.rank}</span>
+          <span className="name">{result.name}</span>
+          <span className="score">{result.score}</span>
+          <button className="expand-button" onClick={() => setExpanded(!expanded)}>
+            {expanded ? "Know Less" : "Know More"}
+          </button>
+        </div>
       </div>
 
       {expanded && (
@@ -74,14 +88,16 @@ const ResumeCard = ({ result }) => {
           {renderSection("Contact", result.contact)}
           {renderSection("Education", result.education)}
           {renderSection("Experiences", result.experiences)}
-          {renderSection("Skills", result.skills)}
+          {renderSkillSection("Skills", result.skills)}
           {renderSection("Certifications", result.certifications)}
           {renderSection("Projects", result.projects)}
-          {renderSection("Relevance", result.relevance)}
+          {renderSection("Project Highlights", result.projectHighlights)}
+          {renderSection("Seniority Level", result.seniorityLevel)}
+          {renderSection("Career Trajectory", result.careerTrajectory)}
+          {renderSection("Experience Relevance Score", result.experienceRelevanceScore)}
           {renderSection("Experience Highlights", result.experienceHighlights)}
           {renderSection("Impact Highlights", result.impactHighlights)}
-          {renderSection("Project Highlights", result.projectHighlights)}
-          {renderSection("ATS Feedback", result.atsFeedback)}
+          {renderSection("ATS Compatibility Score", result.atsCompatibilityScore)}
         </div>
       )}
     </div>

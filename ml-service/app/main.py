@@ -55,7 +55,7 @@ def read_root():
 #     for r in scored_resumes:
 #         d = r["details"]
 #         responses.append(ResumeResponse(
-#             name=d.get("name", f"Resume {r['index'] + 1}"),
+#             name=d.get("name", f"Resume {r['index'] + 1}")
 #             score=r["score"],
 #             rank=index_to_rank[r["index"]],
 #             total=total,
@@ -74,8 +74,7 @@ def read_root():
 #             experienceHighlights=d.get("experienceHighlights", []),
 #             impactHighlights=d.get("impactHighlights", []),
 #             projectHighlights=d.get("projectHighlights", []),
-#             atsScore=d.get("atsScore", 0.0),
-#             atsFeedback=d.get("atsFeedback", []),
+#             atsCompatibilityScore=d.get("atsCompatibilityScore", 0.0),
 #             contact=d.get("contact", {}),
 #         ))
 #
@@ -84,7 +83,7 @@ def read_root():
 
 @app.post("/rank", response_model=List[ResumeResponse])
 def rank_resumes(request: ResumeRequest):
-    # Hardcoded mock response
+    #mock response
     return [
         ResumeResponse(
             name="Alice Johnson",
@@ -106,8 +105,7 @@ def rank_resumes(request: ResumeRequest):
             experienceHighlights=["Deployed services to AWS", "Reduced DB latency by 40%"],
             impactHighlights=["Cut costs by 30%", "Improved uptime by 15%"],
             projectHighlights=["Optimized report generation", "Migrated legacy app"],
-            atsScore=8.4,
-            atsFeedback=["Use standard formatting", "Avoid graphics"],
+            atsCompatibilityScore=8.4,
             contact={
                 "email": "alice@example.com",
                 "phone": "+1234567890",
@@ -134,8 +132,7 @@ def rank_resumes(request: ResumeRequest):
             experienceHighlights=["Built automation scripts"],
             impactHighlights=["Reduced manual work by 50%"],
             projectHighlights=["Integrated third-party API"],
-            atsScore=7.1,
-            atsFeedback=["Improve keyword density", "Add summary section"],
+            atsCompatibilityScore=7.1,
             contact={
                 "email": "bob@example.com",
                 "phone": "+1987654321",

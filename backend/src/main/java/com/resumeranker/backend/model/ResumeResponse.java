@@ -32,8 +32,7 @@ public class ResumeResponse {
     private List<String> impactHighlights;
     private List<String> projectHighlights;
 
-    private double atsScore;
-    private List<String> atsFeedback;
+    private double atsCompatibilityScore;
 
     private Map<String, String> contact;
 }
