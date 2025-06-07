@@ -117,6 +117,8 @@ public class ResumeProcessingService {
                 .append("h2 { font-size: 10px; color: #7FDBFF; text-align: center; text-shadow: 1px 1px #000000; }")
                 .append("div.resume-card { border: 2px solid #F24E1E; padding: 10px; margin: 10px; background-color: #12264d; box-shadow: 4px 4px #000; }")
                 .append("b { color: #F24E1E; }")
+                .append("ul { margin: 5px 0; padding-left: 15px; }")
+                .append("li { margin: 2px 0; }")
                 .append("</style></head><body>");
 
         html.append("<h1>🎮 SKILL QUEST RANKINGS 🎮</h1>");
@@ -125,7 +127,13 @@ public class ResumeProcessingService {
         for (ResumeResponse r : responses) {
             html.append("<div class='resume-card'>")
                     .append("<b>Rank #").append(r.getRank()).append(" — ").append(r.getName()).append("</b><br/>")
-                    .append("# Score: ").append(r.getScore()).append("<br/>")
+                    .append("# Score: ").append(String.format("%.2f", r.getScore())).append("<br/>")
+                    .append("# ATS Compatibility Score: ").append(String.format("%.2f", r.getAtsCompatibilityScore())).append("<br/>")
+                    .append("# Seniority Level: ").append(r.getSeniorityLevel()).append("<br/>")
+                    .append("# Career Trajectory: ").append(r.getCareerTrajectory()).append("<br/>")
+                    .append("# Experience Relevance Score: ").append(String.format("%.2f", r.getExperienceRelevanceScore())).append("<br/>")
+                    .append("<br/>")
+                    .append("# Summary:<br/>").append(r.getSummary()).append("<br/><br/>")
                     .append("# Matched Skills:<br/>")
                     .append("<ul>");
 
@@ -142,11 +150,50 @@ public class ResumeProcessingService {
             }
 
             html.append("</ul>")
+                    .append("# Experience Highlights:<br/>")
+                    .append("<ul>");
+
+            for (String highlight : r.getExperienceHighlights()) {
+                html.append("<li>").append(highlight).append("</li>");
+            }
+
+            html.append("</ul>")
+                    .append("# Impact Highlights:<br/>")
+                    .append("<ul>");
+
+            for (String highlight : r.getImpactHighlights()) {
+                html.append("<li>").append(highlight).append("</li>");
+            }
+
+            html.append("</ul>")
+                    .append("# Project Highlights:<br/>")
+                    .append("<ul>");
+
+            for (String highlight : r.getProjectHighlights()) {
+                html.append("<li>").append(highlight).append("</li>");
+            }
+
+            html.append("</ul>")
+                    .append("# Education:<br/>")
+                    .append("<ul>");
+
+            for (String edu : r.getEducation()) {
+                html.append("<li>").append(edu).append("</li>");
+            }
+
+            html.append("</ul>")
+                    .append("# Certifications:<br/>")
+                    .append("<ul>");
+
+            for (String cert : r.getCertifications()) {
+                html.append("<li>").append(cert).append("</li>");
+            }
+
+            html.append("</ul>")
                     .append("</div>");
         }
 
         html.append("</body></html>");
-
 
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             PdfRendererBuilder builder = new PdfRendererBuilder();

@@ -85,7 +85,7 @@ const ResumeCard = ({ result }) => {
           </div>
           <span className="score">{result.score}</span>
           <button className="expand-button" onClick={() => setExpanded(!expanded)}>
-            {expanded ? "Know Less" : "Know More"}
+            {expanded ? "Close Stats" : "Load Stats"}
           </button>
         </div>
       </div>

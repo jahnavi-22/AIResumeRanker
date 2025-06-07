@@ -67,7 +67,7 @@ const HomePage = () => {
         <h1 className="title">SKILL QUEST<br /></h1><br /><br />
         <h2 className="subtitle">Helping recruiters find top talent quickly</h2><br /><br />
         <button className="upload-btn" onClick={() => navigate("/analyze")}>
-          UPLOAD
+          LET THE GAMES BEGIN
         </button>
         <div className="grass"></div>
       </div>

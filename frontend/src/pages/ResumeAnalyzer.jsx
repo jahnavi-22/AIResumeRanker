@@ -199,11 +199,11 @@ const handleJdTypeChange = (type) => {
         <img src={cloud} alt="cloud" className="cloud" style={{ top: '30%', animationDelay: '-5s' }} />
         <div className="grass"></div>
       <header className="app-header">
-        <h1>SKILL QUEST</h1><br/>
-        <p className="subtitle"> Helping recruiters find top talent quickly</p>
-      </header>
+        <h1>SKILL QUEST</h1><br/><br/>
+        <p className="subtitle"> Enter the game plan. Upload the heroes. We’ll crown the champion.</p>
+      </header><br/>
 
-      <main className="main-content">
+      <main className="blue-content">
         <form onSubmit={handleSubmit} className="upload-form">
           <div className="form-group">
             <label htmlFor="jobId" className="form-label">
@@ -216,7 +216,6 @@ const handleJdTypeChange = (type) => {
               onChange={(e) => setJobId(e.target.value)}
               className="form-input"
               placeholder="Enter Job ID"
-              required
             />
           </div>
 

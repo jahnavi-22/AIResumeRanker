@@ -21,9 +21,9 @@
 
 .header-grid {
   display: grid;
-  grid-template-columns: 1fr 2fr 2fr 2fr 1fr 1fr;
+  grid-template-columns: 1fr 2fr 2fr 2fr 1.5fr 1fr;
   gap: 1rem;
-  align-items: start;
+  align-items: center;
   padding: 0;
 }
 
@@ -42,15 +42,11 @@
   margin: 0;
 }
 
-.rank, .name, .score, .expand-button {
-  text-align: center;
-  padding: 0.5rem;
-}
-
 .rank {
   font-size: 1.25rem;
   font-weight: bold;
   color: var(--primary-color);
+  padding: 0.5rem;
 }
 
 .name {
@@ -58,6 +54,7 @@
   font-weight: 500;
   color: var(--text-primary);
   word-break: break-word;
+  padding: 0.5rem;
 }
 
 .score {

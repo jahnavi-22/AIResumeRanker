@@ -1,12 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import HomePage from './pages/HomePage';
 import ResumeAnalyzer from "./pages/ResumeAnalyzer";
 import Leaderboard from "./pages/Leaderboard";
 import './App.css';
 import { Toaster } from 'react-hot-toast';
+import clickSoundSrc from "./assets/mouse-click.mp3";
 
 function App() {
+  useEffect(() => {
+    const clickSound = new Audio(clickSoundSrc);
+    const handleClick = (e) => {
+      if (e.target.closest("button")) {
+        clickSound.currentTime = 0;
+        clickSound.play();
+      }
+    };
+    window.addEventListener("click", handleClick);
+    return () => window.removeEventListener("click", handleClick);
+  }, []);
+
+
   return (
     <>
       <Toaster
