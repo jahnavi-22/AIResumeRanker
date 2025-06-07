@@ -62,6 +62,8 @@ const Leaderboard = () => {
               <div className="results-header">
                 <span className="header-details">Rank</span>
                 <span className="header-details">Name</span>
+                <span className="header-details">Matched Skills</span>
+                <span className="header-details">Missing Skills</span>
                 <span className="header-details">Score</span>
                 <span className="header-details">Details</span>
               </div>

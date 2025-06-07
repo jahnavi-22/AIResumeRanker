@@ -73,6 +73,16 @@ const ResumeCard = ({ result }) => {
         <div className="header-grid">
           <span className="rank">#{result.rank}</span>
           <span className="name">{result.name}</span>
+          <div className="skills-column">
+            {result.matchedSkills?.map((skill, idx) => (
+              <span key={idx} className="skill-tag matched">{skill}</span>
+            ))}
+          </div>
+          <div className="skills-column">
+            {result.missingSkills?.map((skill, idx) => (
+              <span key={idx} className="skill-tag missing">{skill}</span>
+            ))}
+          </div>
           <span className="score">{result.score}</span>
           <button className="expand-button" onClick={() => setExpanded(!expanded)}>
             {expanded ? "Know Less" : "Know More"}
@@ -82,23 +92,21 @@ const ResumeCard = ({ result }) => {
 
       {expanded && (
         <div className="expandable-section">
-          {renderSection("Summary", result.summary)}
-          {renderSkillSection("Matched Skills", result.matchedSkills, "matched")}
-          {renderSkillSection("Missing Skills", result.missingSkills, "missing")}
-          {renderSection("Contact", result.contact)}
-          {renderSection("Education", result.education)}
-          {renderSection("Experiences", result.experiences)}
-          {renderSkillSection("Skills", result.skills)}
-          {renderSection("Certifications", result.certifications)}
-          {renderSection("Projects", result.projects)}
-          {renderSection("Project Highlights", result.projectHighlights)}
-          {renderSection("Seniority Level", result.seniorityLevel)}
-          {renderSection("Career Trajectory", result.careerTrajectory)}
-          {renderSection("Experience Relevance Score", result.experienceRelevanceScore)}
-          {renderSection("Experience Highlights", result.experienceHighlights)}
-          {renderSection("Impact Highlights", result.impactHighlights)}
-          {renderSection("ATS Compatibility Score", result.atsCompatibilityScore)}
-        </div>
+                  {renderSection("Summary", result.summary)}
+                  {renderSection("Experience Highlights", result.experienceHighlights)}
+                  {renderSection("Impact Highlights", result.impactHighlights)}
+                  {renderSection("Experiences", result.experiences)}
+                  {renderSection("Projects", result.projects)}
+                  {renderSection("Project Highlights", result.projectHighlights)}
+                  {renderSkillSection("Skills", result.skills)}
+                  {renderSection("Certifications", result.certifications)}
+                  {renderSection("Education", result.education)}
+                  {renderSection("Seniority Level", result.seniorityLevel)}
+                  {renderSection("Career Trajectory", result.careerTrajectory)}
+                  {renderSection("Experience Relevance Score", result.experienceRelevanceScore)}
+                  {renderSection("ATS Compatibility Score", result.atsCompatibilityScore)}
+                  {renderSection("Contact", result.contact)}
+                </div>
       )}
     </div>
   );

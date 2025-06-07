@@ -63,6 +63,18 @@ public class ResumeProcessingService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(payload, headers);
 
+        System.out.println("Sending payload to ML service:");
+        System.out.println("Job ID: " + request.getJobId());
+        System.out.println("Job Description:\n" + jdText);
+
+        System.out.println("\nResumes:");
+        for (int i = 0; i < resumeNames.size(); i++) {
+            System.out.println("[" + resumeNames.get(i) + "]");
+            System.out.println(resumeTexts.get(i));
+            System.out.println("----------------------");
+        }
+
+
         ResponseEntity<ResumeResponse[]> response = restTemplate.exchange(
                 mlServiceUrl, HttpMethod.POST, entity, ResumeResponse[].class
         );

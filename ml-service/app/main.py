@@ -91,7 +91,7 @@ def rank_resumes(request: ResumeRequest):
             rank=1,
             total=2,
             topScores=[8.9, 7.5],
-            matchedSkills=["Python", "Spring Boot", "Docker"],
+            matchedSkills=["Python", "Spring Boot", "Docker", "GCP", "AWS", "Spring Boot", "Spring Boot", "Spring Boot", "Spring Boot", "Spring Boot"],
             missingSkills=["Kubernetes", "CI/CD"],
             summary="Experienced Java backend developer with cloud deployment experiences.",
             education=["B.Tech in Computer Science, ABC University"],

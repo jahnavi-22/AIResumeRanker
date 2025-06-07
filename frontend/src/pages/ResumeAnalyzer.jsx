@@ -28,6 +28,16 @@ const ResumeAnalyzer = () => {
  const MAX_FILE_SIZE_MB = 1;
  const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
+ const handleResumeTypeChange = (type) => {
+   setResumeType(type);
+   // Clear other input type when switching
+   if (type === "file") {
+     setResumeUrls([""]);
+   } else if (type === "url") {
+     setResumeFiles([]);
+   }
+ };
+
  const handleRemoveResumeFile = (index) => {
    setResumeFiles((prev) => prev.filter((_, i) => i !== index));
  };
@@ -37,7 +47,7 @@ const ResumeAnalyzer = () => {
    const validFiles = [];
    newFiles.forEach((file) => {
      if (file.size > MAX_FILE_SIZE_BYTES) {
-       alert(`${file.name} exceeds the 1MB limit and was not added.`);
+       toast.error(`${file.name} exceeds the 1MB limit and was not added.`);
      } else {
        validFiles.push(file);
      }
@@ -52,20 +62,34 @@ const ResumeAnalyzer = () => {
 
 const handleJdFileChange = (e) => {
   const file = e.target.files[0];
-  if (file && file.size > MAX_FILE_SIZE_MB) {
-    alert(`${file.name} exceeds the 1MB limit and was not added.`);
+  if (file.size > MAX_FILE_SIZE_BYTES) {
+    toast.error(`${file.name} exceeds the 1MB limit and was not added.`);
     e.target.value = "";
   } else {
     setJdFile(file);
   }
 };
 
+const handleJdTypeChange = (type) => {
+  setJdType(type);
+  // Clear other inputs when type changes
+  if (type === "text") {
+    setJdFile(null);
+    setJdUrl("");
+  } else if (type === "file") {
+    setJdText("");
+    setJdUrl("");
+  } else if (type === "url") {
+    setJdText("");
+    setJdFile(null);
+  }
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!jobId.trim()) {
-      alert("Please enter a Job ID.");
+      toast.error("Please enter a Job ID.");
       return;
     }
 
@@ -80,17 +104,17 @@ const handleJdFileChange = (e) => {
     (resumeType === "url" && resumeUrls.some((url) => url.trim() !== ""));
 
   if (!isJdProvided) {
-    alert("Please provide a job description (text, file, or URL).");
+    toast.error("Please provide a job description (text, file, or URL).");
     return;
   }
 
-  if (jdText.length < 10) {
-    alert("Job description must be at least 10 characters long.");
+  if (jdType == "text" && jdText.length < 10) {
+    toast.error("Job description must be at least 10 characters long.");
     return;
   }
 
   if (!isResumeProvided) {
-    alert("Please provide at least one resume (file or URL).");
+    toast.error("Please provide at least one resume (file or URL).");
     return;
   }
 
@@ -126,7 +150,7 @@ const handleJdFileChange = (e) => {
           state: { jobId, results: resultsWithNames },
       });
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -144,7 +168,7 @@ const handleJdFileChange = (e) => {
       const blob = await res.blob();
       saveAs(blob, `Results-ID-${jobId}.pdf`);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     } finally {
       setLoading(false);
     }
@@ -199,9 +223,9 @@ const handleJdFileChange = (e) => {
           <div className="form-group">
               <label className="form-label">Job Description</label>
               <div>
-               <label><input type="radio" value="text" checked={jdType === "text"} onChange={() => setJdType("text")} /> Text</label>
-               <label><input type="radio" value="file" checked={jdType === "file"} onChange={() => setJdType("file")} /> File</label>
-               <label><input type="radio" value="url" checked={jdType === "url"} onChange={() => setJdType("url")} /> URL</label>
+               <label><input type="radio" value="text" checked={jdType === "text"} onChange={() => handleJdTypeChange("text")} /> Text</label>
+               <label><input type="radio" value="file" checked={jdType === "file"} onChange={() => handleJdTypeChange("file")} /> File</label>
+               <label><input type="radio" value="url" checked={jdType === "url"} onChange={() => handleJdTypeChange("url")} /> URL</label>
               </div><br/>
               {jdType === "text" && <textarea value={jdText} onChange={(e) => setJdText(e.target.value)} className="form-input" />}
               {jdType === "file" && <input type="file" accept=".pdf,.doc,.docx,.txt" onChange={handleJdFileChange} className="form-input pixel-btn"
@@ -212,13 +236,13 @@ const handleJdFileChange = (e) => {
           <div className="form-group">
            <label className="form-label">Resumes</label>
            <div>
-            <label><input type="radio" value="file" checked={resumeType === "file"} onChange={() => setResumeType("file")} /> Files</label>
-            <label><input type="radio" value="url" checked={resumeType === "url"} onChange={() => setResumeType("url")} /> URLs</label>
+            <label><input type="radio" value="file" checked={resumeType === "file"} onChange={() => handleResumeTypeChange("file")} /> Files</label>
+            <label><input type="radio" value="url" checked={resumeType === "url"} onChange={() => handleResumeTypeChange("url")} /> URLs</label>
            </div><br/>
             {resumeType === "file" && (
              <>
              <input type="file" multiple accept=".pdf,.doc,.docx,.txt" onChange={handleResumeFileChange} className="form-input pixel-btn"
-               title="Max size: 1 MB per file" title={`${resumeFiles.length} file${resumeFiles.length !== 1 ? "s" : ""} selected`}/>
+               title="Max size: 1 MB per file"/>
 
              <div className="file-list-scrollable">
                <ul className="file-list">
