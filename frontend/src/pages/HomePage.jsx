@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import "./HomePage.css";
 import cloud from "../assets/cloud.png";
 import star from "../assets/star.png";
-import cursor from "../assets/cursor.png";
 import clickCursor from "../assets/cursor-click.png";
 
 const HomePage = () => {
@@ -38,22 +37,22 @@ const HomePage = () => {
     }
   }
 
-   useEffect(() => {
-     const style = document.createElement("style");
-     style.innerHTML = `
-       body {
-         cursor: url(${cursor}) 4 4, auto;
-       }
-       body:active {
-         cursor: url(${clickCursor}) 4 4, auto;
-       }
-     `;
-     document.head.appendChild(style);
-
-     return () => {
-       document.head.removeChild(style);
-     };
-   }, []);
+//    useEffect(() => {
+//      const style = document.createElement("style");
+//      style.innerHTML = `
+//        body {
+//          cursor: url(${cursor}) 4 4, auto;
+//        }
+//        body:active {
+//          cursor: url(${clickCursor}) 4 4, auto;
+//        }
+//      `;
+//      document.head.appendChild(style);
+//
+//      return () => {
+//        document.head.removeChild(style);
+//      };
+//    }, []);
 
 
 

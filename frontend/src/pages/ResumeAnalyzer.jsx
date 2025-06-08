@@ -13,14 +13,8 @@ const ResumeAnalyzer = () => {
 
   const [jobId, setJobId] = useState("");
 
-  const [jdType, setJdType] = useState("file");
-  const [jdText, setJdText] = useState("");
-  const [jdFile, setJdFile] = useState(null);
-  const [jdUrl, setJdUrl] = useState("");
-
-  const [resumeType, setResumeType] = useState("file");
-  const [resumeFiles, setResumeFiles] = useState([]);
-  const [resumeUrls, setResumeUrls] = useState([""]);
+  const [jdType, setJdType] = useState({type: "file", text: "", file: null, url: ""});
+  const [resumeType, setResumeType] = useState({type: "file", files: [], urls: [""]});
 
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -28,19 +22,45 @@ const ResumeAnalyzer = () => {
  const MAX_FILE_SIZE_MB = 1;
  const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
+
+const handleJdTypeChange = (type) => {
+  setJdType({...jdType, type, text: "", file: null, url: ""});
+};
+
+const handleJdTextChange = (e) => {
+    setJdType({...jdType, text: e.target.value});
+};
+
+const handleJdFileChange = (e) => {
+  const file = e.target.files[0];
+  if (file.size > MAX_FILE_SIZE_BYTES) {
+    toast.error(`${file.name} exceeds the 1MB limit and was not added.`);
+    e.target.value = "";
+  } else {
+    setJdType({...jdType, file});
+  }
+};
+
+const handleJdUrlChange = (e) => {
+    setJdType({...jdType, url: e.target.value});
+};
+
+
+const isValidUrl = (url) => {
+  const regex = /^(https?:\/\/)[\w-]+(\.[\w-]+)+([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$/;
+  return regex.test(url);
+};
+
+
  const handleResumeTypeChange = (type) => {
-   setResumeType(type);
-   // Clear other input type when switching
-   if (type === "file") {
-     setResumeUrls([""]);
-   } else if (type === "url") {
-     setResumeFiles([]);
-   }
+   setResumeType({...resumeType,type, ...(type === "file" ? { files: [] } : { urls: [] })})
  };
 
+
  const handleRemoveResumeFile = (index) => {
-   setResumeFiles((prev) => prev.filter((_, i) => i !== index));
+   setResumeType((prev) => ({...prev, files: prev.files.filter((_, i) => i !== index),}));
  };
+
 
  const handleResumeFileChange = (e) => {
    const newFiles = Array.from(e.target.files);
@@ -54,37 +74,27 @@ const ResumeAnalyzer = () => {
    });
 
    if (validFiles.length > 0) {
-     setResumeFiles((prev) => [...prev, ...validFiles]);
+     setResumeType((prev) => ({...prev, files: [...prev.files, ...validFiles],}));
    }
-
    e.target.value = "";
  };
 
-const handleJdFileChange = (e) => {
-  const file = e.target.files[0];
-  if (file.size > MAX_FILE_SIZE_BYTES) {
-    toast.error(`${file.name} exceeds the 1MB limit and was not added.`);
-    e.target.value = "";
-  } else {
-    setJdFile(file);
-  }
-};
+ const handleResumeUrlChange = (e, idx) => {
+   const updated = [...resumeType.urls];
+   updated[idx] = e.target.value;
+   setResumeType({ ...resumeType, urls: updated });
+}
 
-const handleJdTypeChange = (type) => {
-  setJdType(type);
-  // Clear other inputs when type changes
-  if (type === "text") {
-    setJdFile(null);
-    setJdUrl("");
-  } else if (type === "file") {
-    setJdText("");
-    setJdUrl("");
-  } else if (type === "url") {
-    setJdText("");
-    setJdFile(null);
-  }
-};
+ const addResumeUrl = () => {
+     setResumeType((prev) => ({ ...prev, urls: [...prev.urls, ""] }));
+ };
 
+ const removeResumeUrl = (idx) => {
+     setResumeType((prev) => ({...prev,urls: prev.urls.filter((_, i) => i !== idx),}));
+ };
+
+
+// let user submit only if passes these checks
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -94,43 +104,62 @@ const handleJdTypeChange = (type) => {
     }
 
 
+//mandatory check for jd
   const isJdProvided =
-    (jdType === "text" && jdText.trim()) ||
-    (jdType === "file" && jdFile) ||
-    (jdType === "url" && jdUrl.trim());
-
-  const isResumeProvided =
-    (resumeType === "file" && resumeFiles.length > 0) ||
-    (resumeType === "url" && resumeUrls.some((url) => url.trim() !== ""));
+    (jdType.type === "text" && jdType.text.trim()) ||
+    (jdType.type === "file" && jdType.file) ||
+    (jdType.type  === "url" && jdType.url.trim());
 
   if (!isJdProvided) {
     toast.error("Please provide a job description (text, file, or URL).");
     return;
   }
 
-  if (jdType == "text" && jdText.length < 10) {
+  if (jdType.type == "text" && jdType.text.length < 10) {
     toast.error("Job description must be at least 10 characters long.");
     return;
   }
+
+  if (jdType.type === "url" && jdType.url.trim() && !isValidUrl(jdType.url)) {
+      toast.error(`The job description URL is invalid.`);
+      return;
+    }
+
+
+//mandatory check for resume
+  const isResumeProvided =
+    (resumeType.type === "file" && resumeType.files.length > 0) ||
+    (resumeType.type === "url" && resumeType.urls.some((url) => url.trim() !== ""));
 
   if (!isResumeProvided) {
     toast.error("Please provide at least one resume (file or URL).");
     return;
   }
 
+  if (resumeType.type === "url") {
+      for (let i = 0; i < resumeType.urls.length; i++) {
+        if (resumeType.urls[i].trim() && !isValidUrl(resumeType.urls[i])) {
+          toast.error(`Resume URL ${i + 1} is invalid.`);
+          return;
+        }
+      }
+    }
+
+//send uploaded data to backend, navigate to leaderboard if successful els throw err
     const formData = new FormData();
     formData.append("jobId", jobId);
-    if (jdType === "text") formData.append("jdText", jdText);
-    else if (jdType === "file" && jdFile) formData.append("jdFile", jdFile);
-    else if (jdType === "url") formData.append("jdUrl", jdUrl);
+    if (jdType.type === "text") formData.append("jdText", jdType.text);
+    else if (jdType.type === "file" && jdType.file) formData.append("jdFile", jdType.file);
+    else if (jdType.type === "url") formData.append("jdUrl", jdType.url);
 
-    if (resumeType === "file") {
-        resumeFiles.forEach((file) => formData.append("resumeFiles", file));
+    if (resumeType.type === "file") {
+        resumeType.files.forEach((file) => formData.append("resumeFiles", file));
     } else {
-        resumeUrls.forEach((url) => {
+        resumeType.urls.forEach((url) => {
             if (url.trim()) formData.append("resumeUrls", url);
           });
     }
+
 
     try {
       setLoading(true);
@@ -146,6 +175,7 @@ const handleJdTypeChange = (type) => {
         ...result
       }));
 
+      toast.success("Upload successful!");
       navigate("/leaderboard", {
           state: { jobId, results: resultsWithNames },
       });
@@ -156,23 +186,6 @@ const handleJdTypeChange = (type) => {
     }
   };
 
-  const handleDownload = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch(`http://localhost:8080/api/resume/download?jobId=${jobId}`, {
-        method: "GET",
-      });
-
-      if (!res.ok) throw new Error("Failed to download file");
-
-      const blob = await res.blob();
-      saveAs(blob, `Results-ID-${jobId}.pdf`);
-    } catch (err) {
-      toast.error(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const stars = Array.from({ length: 30 }).map((_, i) => {
     const left = `${Math.random() * 100}%`;
@@ -222,52 +235,49 @@ const handleJdTypeChange = (type) => {
           <div className="form-group">
               <label className="form-label">Job Description</label>
               <div>
-               <label><input type="radio" value="text" checked={jdType === "text"} onChange={() => handleJdTypeChange("text")} /> Text</label>
-               <label><input type="radio" value="file" checked={jdType === "file"} onChange={() => handleJdTypeChange("file")} /> File</label>
-               <label><input type="radio" value="url" checked={jdType === "url"} onChange={() => handleJdTypeChange("url")} /> URL</label>
+               <label><input type="radio" value="text" checked={jdType.type === "text"} onChange={() => handleJdTypeChange("text")} /> Text</label>
+               <label><input type="radio" value="file" checked={jdType.type === "file"} onChange={() => handleJdTypeChange("file")} /> File</label>
+               <label><input type="radio" value="url" checked={jdType.type === "url"} onChange={() => handleJdTypeChange("url")} /> URL</label>
               </div><br/>
-              {jdType === "text" && <textarea value={jdText} onChange={(e) => setJdText(e.target.value)} className="form-input" />}
-              {jdType === "file" && <input type="file" accept=".pdf,.doc,.docx,.txt" onChange={handleJdFileChange} className="form-input pixel-btn"
-              title="Max size: 1 MB" />}
-              {jdType === "url" && <input type="text" value={jdUrl} onChange={(e) => setJdUrl(e.target.value)} className="form-input retro-file" />}
+
+              {jdType.type === "text" && (<textarea value={jdType.text} onChange={handleJdTextChange} className="form-input" /> )}
+              {jdType.type === "file" && (<input type="file" accept=".pdf,.doc,.docx,.txt" onChange={handleJdFileChange} className="form-input pixel-btn" title="Max size: 1 MB" /> )}
+              {jdType.type === "url" && (<input type="text" value={jdType.url} onChange={handleJdUrlChange} className="form-input retro-file" /> )}
           </div>
 
           <div className="form-group">
            <label className="form-label">Resumes</label>
            <div>
-            <label><input type="radio" value="file" checked={resumeType === "file"} onChange={() => handleResumeTypeChange("file")} /> Files</label>
-            <label><input type="radio" value="url" checked={resumeType === "url"} onChange={() => handleResumeTypeChange("url")} /> URLs</label>
+            <label><input type="radio" value="file" checked={resumeType.type === "file"} onChange={() => handleResumeTypeChange("file")} /> Files</label>
+            <label><input type="radio" value="url" checked={resumeType.type === "url"} onChange={() => handleResumeTypeChange("url")} /> URLs</label>
            </div><br/>
-            {resumeType === "file" && (
+            {resumeType.type === "file" && (
              <>
              <input type="file" multiple accept=".pdf,.doc,.docx,.txt" onChange={handleResumeFileChange} className="form-input pixel-btn"
                title="Max size: 1 MB per file"/>
 
              <div className="file-list-scrollable">
                <ul className="file-list">
-                 {resumeFiles.map((file, i) => (
+                 {resumeType.files.map((file, i) => (
                    <li key={i} className="file-item">
                      {file.name}
-                     <button type="button" className="remove-btn" onClick={() => handleRemoveResumeFile(i)}>×</button>
+                     <button type="button" className="remove-btn"  onClick={() => handleRemoveResumeFile(i)}>×</button>
                    </li>
-                 ))}
+                  ))}
                </ul>
                </div>
              </>
             )}
 
-            {resumeType === "url" && (
+            {resumeType.type === "url" && (
              <>
-              {resumeUrls.map((url, idx) => (
+              {resumeType.urls.map((url, idx) => (
                 <div key={idx} className="resume-url-container">
-                  <input type="text" value={url} onChange={(e) => { const updated = [...resumeUrls]; updated[idx] = e.target.value; setResumeUrls(updated); }}
-                    className="form-input" placeholder={`Resume URL ${idx + 1}`} />
-                  <button type="button" className="remove-btn" onClick={() => {
-                     setResumeUrls(resumeUrls.filter((_, i) => i !== idx)); }}  aria-label="Remove URL" > × </button>
+                  <input type="text" value={url} onChange={(e) => handleResumeUrlChange(e, idx)} className="form-input" placeholder={`Resume URL ${idx + 1}`} />
+                  <button type="button" className="remove-btn" onClick={() => removeResumeUrl(idx)} aria-label="Remove URL" > × </button>
                  </div>
                   ))}
-                   <button type="button" className="add-url-btn" onClick={() => setResumeUrls([...resumeUrls, ""])}>
-                              + Add URL </button>
+                   <button type="button" className="add-url-btn" onClick={addResumeUrl}>+ Add URL </button>
                </>
               )}
              </div>

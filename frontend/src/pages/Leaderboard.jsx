@@ -10,6 +10,8 @@ const Leaderboard = () => {
   const { state } = useLocation();
   const { jobId, results } = state || {};
 
+
+//download results
   const handleDownload = async () => {
     try {
       const res = await fetch(`http://localhost:8080/api/resume/download?jobId=${jobId}`);

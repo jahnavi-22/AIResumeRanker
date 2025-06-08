@@ -55,7 +55,6 @@ body {
   box-shadow: 4px 4px 0 #000;
   font-family: 'Press Start 2P', monospace;
   text-transform: uppercase;
-  cursor: pointer;
   image-rendering: pixelated;
   position: relative;
   z-index: 2;
