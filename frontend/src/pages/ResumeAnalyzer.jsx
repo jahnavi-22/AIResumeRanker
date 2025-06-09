@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import ResumeCard from "../components/ResumeCard";
 import { saveAs } from "file-saver";
 import toast from "react-hot-toast";
-import star from "../assets/star.png";
-import cloud from "../assets/cloud.png";
+import Stars from "../components/Stars";
+import Clouds from "../components/Clouds";
 import "./ResumeAnalyzer.css";
 
 
@@ -187,29 +187,11 @@ const isValidUrl = (url) => {
   };
 
 
-  const stars = Array.from({ length: 30 }).map((_, i) => {
-    const left = `${Math.random() * 100}%`;
-    const top = `${Math.random() * 100}%`;
-    const size = Math.random() > 0.5 ? 16 : 8;
-    const delay = `${Math.random() * 2}s`;
-    return (
-      <img
-        key={i}
-        src={star}
-        alt="star"
-        className="star"
-        style={{ left, top, width: `${size}px`, height: `${size}px`, animationDelay: delay }}
-      />
-    );
-  });
-
 
   return (
     <div className="app-container">
-        {stars}
-        <img src={cloud} alt="cloud" className="cloud" style={{ top: '5%', animationDelay: '-10s' }} />
-        <img src={cloud} alt="cloud" className="cloud" style={{ top: '15%', animationDelay: '-22s' }} />
-        <img src={cloud} alt="cloud" className="cloud" style={{ top: '30%', animationDelay: '-5s' }} />
+        <Stars/>
+        <Clouds />
         <div className="grass"></div>
       <header className="app-header">
         <h1>SKILL QUEST</h1><br/><br/>

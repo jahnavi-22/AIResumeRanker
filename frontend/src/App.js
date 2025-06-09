@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import HomePage from './pages/HomePage';
 import ResumeAnalyzer from "./pages/ResumeAnalyzer";
 import Leaderboard from "./pages/Leaderboard";
-import './App.css';
+import "./App.css";
 import { Toaster } from 'react-hot-toast';
 import clickSoundSrc from "./assets/mouse-click.mp3";
 

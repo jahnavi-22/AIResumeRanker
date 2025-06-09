@@ -127,69 +127,34 @@ public class ResumeProcessingService {
         for (ResumeResponse r : responses) {
             html.append("<div class='resume-card'>")
                     .append("<b>Rank #").append(r.getRank()).append(" — ").append(r.getName()).append("</b><br/>")
-                    .append("# Score: ").append(String.format("%.2f", r.getScore())).append("<br/>")
-                    .append("# ATS Compatibility Score: ").append(String.format("%.2f", r.getAtsCompatibilityScore())).append("<br/>")
+                    .append("# Matched Skills: ").append(String.join(", ", r.getMatchedSkills())).append("<br/>")
+                    .append("# Missing Skills: ").append(String.join(", ", r.getMissingSkills())).append("<br/>")
+                    .append("# Score: ").append(String.format("%.2f", r.getScore())).append("<br/><br/>")
+
+                    .append("# Summary:<br/>").append(r.getSummary()).append("<br/><br/>")
+
+                    .append("# Experience Highlights:<br/><ul>");
+            for (String item : r.getExperienceHighlights()) html.append("<li>").append(item).append("</li>");
+            html.append("</ul># Impact Highlights:<br/><ul>");
+            for (String item : r.getImpactHighlights()) html.append("<li>").append(item).append("</li>");
+            html.append("</ul># Experiences:<br/><ul>");
+            for (String item : r.getExperiences()) html.append("<li>").append(item).append("</li>");
+            html.append("</ul># Projects:<br/><ul>");
+            for (String item : r.getProjects()) html.append("<li>").append(item).append("</li>");
+            html.append("</ul># Project Highlights:<br/><ul>");
+            for (String item : r.getProjectHighlights()) html.append("<li>").append(item).append("</li>");
+            html.append("</ul># Skills:<br/><ul>");
+            for (String item : r.getSkills()) html.append("<li>").append(item).append("</li>");
+            html.append("</ul># Certifications:<br/><ul>");
+            for (String item : r.getCertifications()) html.append("<li>").append(item).append("</li>");
+            html.append("</ul># Education:<br/><ul>");
+            for (String item : r.getEducation()) html.append("<li>").append(item).append("</li>");
+            html.append("</ul>")
                     .append("# Seniority Level: ").append(r.getSeniorityLevel()).append("<br/>")
                     .append("# Career Trajectory: ").append(r.getCareerTrajectory()).append("<br/>")
                     .append("# Experience Relevance Score: ").append(String.format("%.2f", r.getExperienceRelevanceScore())).append("<br/>")
-                    .append("<br/>")
-                    .append("# Summary:<br/>").append(r.getSummary()).append("<br/><br/>")
-                    .append("# Matched Skills:<br/>")
-                    .append("<ul>");
-
-            for (String skill : r.getMatchedSkills()) {
-                html.append("<li>").append(skill).append("</li>");
-            }
-
-            html.append("</ul>")
-                    .append("# Missing Skills:<br/>")
-                    .append("<ul>");
-
-            for (String skill : r.getMissingSkills()) {
-                html.append("<li>").append(skill).append("</li>");
-            }
-
-            html.append("</ul>")
-                    .append("# Experience Highlights:<br/>")
-                    .append("<ul>");
-
-            for (String highlight : r.getExperienceHighlights()) {
-                html.append("<li>").append(highlight).append("</li>");
-            }
-
-            html.append("</ul>")
-                    .append("# Impact Highlights:<br/>")
-                    .append("<ul>");
-
-            for (String highlight : r.getImpactHighlights()) {
-                html.append("<li>").append(highlight).append("</li>");
-            }
-
-            html.append("</ul>")
-                    .append("# Project Highlights:<br/>")
-                    .append("<ul>");
-
-            for (String highlight : r.getProjectHighlights()) {
-                html.append("<li>").append(highlight).append("</li>");
-            }
-
-            html.append("</ul>")
-                    .append("# Education:<br/>")
-                    .append("<ul>");
-
-            for (String edu : r.getEducation()) {
-                html.append("<li>").append(edu).append("</li>");
-            }
-
-            html.append("</ul>")
-                    .append("# Certifications:<br/>")
-                    .append("<ul>");
-
-            for (String cert : r.getCertifications()) {
-                html.append("<li>").append(cert).append("</li>");
-            }
-
-            html.append("</ul>")
+                    .append("# ATS Compatibility Score: ").append(String.format("%.2f", r.getAtsCompatibilityScore())).append("<br/>")
+                    .append("# Contact: ").append(r.getContact()).append("<br/>")
                     .append("</div>");
         }
 
