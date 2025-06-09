@@ -208,6 +208,7 @@ button.add-url-btn:hover {
   font-size: 12px;
   image-rendering: pixelated;
   margin-right: 12px;
+  width: 97.5%;
 }
 
 .file-wrapper {

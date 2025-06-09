@@ -11,34 +11,44 @@ function App() {
   useEffect(() => {
     const clickSound = new Audio(clickSoundSrc);
 
-    const style = document.createElement('style');
-    style.textContent = `
-      html, body, * {
-        cursor: url('/cursor-normal-32.png'), auto !important;
-      }
-      button, button:hover, button:focus,
-      .upload-btn, .upload-btn:hover, .upload-btn:focus,
-      [role="button"], [role="button"]:hover, [role="button"]:focus {
-        cursor: url('/cursor-click-32.png'), auto !important;
-      }
-      button:active, .upload-btn:active, [role="button"]:active {
-        cursor: url('/cursor-click-32.png'), auto !important;
-      }
-    `;
-    document.head.appendChild(style);
+    document.body.style.cursor = `url('/cursor-big.png'), auto`;
 
-    const handleClick = (e) => {
-      if (e.target.closest('button') || e.target.closest('[role="button"]')) {
+    const setClickCursors = () => {
+      const elements = document.querySelectorAll(
+        'button, [role="button"], .upload-btn, input[type="file"], input[type="radio"], label:has(input[type="radio"]), .pixel-btn'
+      );
+      elements.forEach(element => {
+        element.style.cursor = `url('/cursor-clicks--final-1.png') 0 0, auto`;
+      });
+
+      const style = document.createElement('style');
+      style.textContent = `
+        .pixel-btn::file-selector-button {
+          cursor: url('/cursor-clicks--final-1.png') 0 0, auto !important;
+        }
+      `;
+      document.head.appendChild(style);
+    };
+
+    // Initial setup
+    setClickCursors();
+
+    // Handle clicks
+    window.addEventListener("click", (e) => {
+      if (e.target.closest('button') || e.target.closest('[role="button"]') || 
+          e.target.closest('input[type="file"]') || e.target.closest('input[type="radio"]') ||
+          e.target.closest('label:has(input[type="radio"])') || e.target.closest('.pixel-btn')) {
         clickSound.currentTime = 0;
         clickSound.play();
       }
-    };
+    });
 
-    window.addEventListener("click", handleClick);
+    // Watch for new elements
+    const observer = new MutationObserver(setClickCursors);
+    observer.observe(document.body, { childList: true, subtree: true });
 
     return () => {
-      window.removeEventListener("click", handleClick);
-      document.head.removeChild(style);
+      observer.disconnect();
     };
   }, []);
 

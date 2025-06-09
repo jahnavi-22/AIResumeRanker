@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import validUrl from 'valid-url';
 import Stars from "../components/Stars";
 import Clouds from "../components/Clouds";
 import "./ResumeAnalyzer.css";
@@ -43,10 +44,8 @@ const handleJdUrlChange = (e) => {
     setJdType({...jdType, url: e.target.value});
 };
 
-
 const isValidUrl = (url) => {
-  const regex = /^(https?:\/\/)[\w-]+(\.[\w-]+)+([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?$/;
-  return regex.test(url);
+  return validUrl.isUri(url);
 };
 
 
