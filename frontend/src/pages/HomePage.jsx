@@ -1,9 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./HomePage.css";
 import Stars from "../components/Stars";
 import Clouds from "../components/Clouds";
-import clickCursor from "../assets/cursor-click.png";
 
 const HomePage = () => {
   const navigate = useNavigate();

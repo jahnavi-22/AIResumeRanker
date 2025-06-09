@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ResumeCard from "../components/ResumeCard";
-import { saveAs } from "file-saver";
 import toast from "react-hot-toast";
 import Stars from "../components/Stars";
 import Clouds from "../components/Clouds";
@@ -16,7 +14,7 @@ const ResumeAnalyzer = () => {
   const [jdType, setJdType] = useState({type: "file", text: "", file: null, url: ""});
   const [resumeType, setResumeType] = useState({type: "file", files: [], urls: [""]});
 
-  const [results, setResults] = useState([]);
+//   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
 
  const MAX_FILE_SIZE_MB = 1;
@@ -115,7 +113,7 @@ const isValidUrl = (url) => {
     return;
   }
 
-  if (jdType.type == "text" && jdType.text.length < 10) {
+  if (jdType.type === "text" && jdType.text.length < 10) {
     toast.error("Job description must be at least 10 characters long.");
     return;
   }
