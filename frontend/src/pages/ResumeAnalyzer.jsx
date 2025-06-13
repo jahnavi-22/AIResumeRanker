@@ -160,7 +160,7 @@ const ResumeAnalyzer = () => {
     const loadingToastId = toast.loading("Please wait while we process the data");
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:8080/api/resume/upload", {
+      const res = await fetch("${process.env.REACT_APP_BACKEND_URL}/api/resume/upload", {
         method: "POST",
         body: formData,
       });
