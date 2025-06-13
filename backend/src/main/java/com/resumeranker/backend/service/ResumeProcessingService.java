@@ -80,7 +80,7 @@ public class ResumeProcessingService {
 
 
         ResponseEntity<ResumeResponse[]> response = restTemplate.exchange(
-                mlServiceUrl, HttpMethod.POST, entity, ResumeResponse[].class
+                mlServiceUrl + "/rank", HttpMethod.POST, entity, ResumeResponse[].class
         );
 
         List<ResumeResponse> responses = List.of(Objects.requireNonNull(response.getBody()));
