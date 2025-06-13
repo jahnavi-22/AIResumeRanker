@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-@CrossOrigin(origins = "*")
+@CrossOrigin(origins = "${cors.origin}")
 @RestController
 @RequestMapping("/api/resume")
 public class UploadController {
