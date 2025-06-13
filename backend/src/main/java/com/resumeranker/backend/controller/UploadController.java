@@ -28,7 +28,7 @@ public class UploadController {
             @RequestParam(required = false) MultipartFile jdFile,
             @RequestParam(required = false) String jdUrl,
             @RequestParam(required = false) List<MultipartFile> resumeFiles,
-            @RequestParam(required = false) List<String> resumeUrls) throws TikaException, IOException {
+            @RequestParam(required = false, name = "resumeUrls[]") List<String> resumeUrls) throws TikaException, IOException {
 
         ResumeRequest request = new ResumeRequest();
         request.setJobId(jobId);
@@ -37,6 +37,14 @@ public class UploadController {
         request.setJdUrl(jdUrl);
         request.setResumeFiles(resumeFiles);
         request.setResumeUrls(resumeUrls);
+
+        System.out.println("jobId = " + jobId);
+        System.out.println("jdText = " + jdText);
+        System.out.println("jdFile = " + (jdFile != null ? jdFile.getOriginalFilename() : "null"));
+        System.out.println("jdUrl = " + jdUrl);
+        System.out.println("resumeFiles = " + (resumeFiles != null ? resumeFiles.size() : "null"));
+        System.out.println("resumeUrls = " + resumeUrls);
+
 
         List<ResumeResponse> responses = resumeService.process(request);
         return ResponseEntity.ok(responses);

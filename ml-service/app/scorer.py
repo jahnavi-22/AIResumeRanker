@@ -18,7 +18,7 @@ def embed_keywords(keywords: list):
 #   - score as percentage of matched keywords
 #   - list of matched keywords
 #   - list of missing keywords
-def semantic_match_score(jd_keywords, resume_keywords, threshold=0.85):
+def semantic_match_score(jd_keywords, resume_keywords, threshold=0.70):
     jd_embeddings = embed_keywords(jd_keywords)
     resume_embeddings = embed_keywords(resume_keywords)
 

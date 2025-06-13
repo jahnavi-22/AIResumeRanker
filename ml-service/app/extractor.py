@@ -1,93 +1,91 @@
-import ast
-
-from dotenv import load_dotenv
-from openai import OpenAI
 import os
-
-from sentence_transformers import SentenceTransformer
+import hashlib
+import json
+from cachetools import LRUCache
+from dotenv import load_dotenv
+from openai import AsyncOpenAI
+from typing import Dict, Any
 
 load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-model_name = 'all-MiniLM-L6-v2'
-sentence_transformer_model = SentenceTransformer(model_name)
+# In-memory cache
+response_cache = LRUCache(maxsize=500)
 
 
-def extract_resume_details(text: str) -> dict:
+def clean_gpt_output(text: str) -> str:
+    # Remove markdown/code block formatting
+    if text.startswith("```") and text.endswith("```"):
+        lines = text.splitlines()
+        lines = lines[1:] if lines[0].startswith("```") else lines
+        lines = lines[:-1] if lines[-1].strip() == "```" else lines
+        text = "\n".join(lines)
+    return text.strip()
+
+
+async def extract_resume_details(text: str, jd_text: str) -> dict:
+    cache_key = hashlib.sha256((jd_text.strip() + "::" + text.strip()).encode("utf-8")).hexdigest()
+    
+    if cache_key in response_cache:
+        print("Cache hit.")
+        return response_cache[cache_key]
+    
     prompt = (
-        "You are an expert HR analyst. Given the resume text below, extract the following fields.\n\n"
-        "Return your answer as a Python dictionary literal containing the keys listed below.\n"
-        "Use the exact key names and data types as specified.\n"
-        "Do not add any explanations or extra text.\n\n"
-        "Fields and expected formats:\n"
-        "- name: string (full name of the candidate)\n"
+        "You are an expert HR analyst and ATS system.\n"
+        "Given the resume text and the job description below, do the following:\n\n"
+        "1. Extract the candidate details with these exact keys and types:\n"
+        "- name: string\n"
         "- contact: dict with keys 'email' (string or null), 'phone' (string or null), 'linkedin' (string or null)\n"
-        "- summary: string (brief professional summary)\n"
-        "- education: list of strings (each is a degree or qualification)\n"
-        "- experiences: list of strings (job titles and durations)\n"
-        "- skills: list of strings\n"
+        "- summary: string(final assessment of the candidate)\n"
+        "- education: list of strings\n"
+        "- experiences: list of strings\n"
+        "- skills: list of strings (include all explicit and strongly inferred skills, both hard and soft skills)\n"
         "- certifications: list of strings\n"
         "- projects: list of strings\n"
-        "- experienceRelevanceScore: float (scale 1.0 to 10.0)\n"
-        "- seniorityLevel: string (e.g., 'Junior Developer', 'Senior Engineer')\n"
-        "- careerTrajectory: string (summary of career progression)\n"
+        "- experienceRelevanceScore: float (1.0 to 10.0)\n"
+        "- seniorityLevel: string\n"
+        "- careerTrajectory: string\n"
         "- experienceHighlights: list of strings\n"
         "- impactHighlights: list of strings\n"
         "- projectHighlights: list of strings\n"
-        "- atsCompatibilityScore: float (scale 1.0 to 10.0)\n"
+        "- atsCompatibilityScore: float (1.0 to 10.0)\n\n"
+        "2. Extract the top 15 most relevant skills from the job description (explicit and inferred).\n"
+        "3. Calculate which skills from the job description are matched by the candidate's skills.\n"
+        "4. Calculate which skills from the job description are missing.\n"
+        "5. Provide a semantic match score (0-100) reflecting how well the candidate skills match the job description skills.\n\n"
+        "Return a Python dictionary literal with these keys:\n"
+        "- All keys from candidate details above\n"
+        "- jdSkills: list of strings (top 15 job description skills)\n"
+        "- matchedSkills: list of strings\n"
+        "- missingSkills: list of strings\n"
+        "- skillMatchScore: float (0-100)\n\n"
+        "Return the entire response as a valid JSON object with double quotes only.\n"
+        "Do NOT include single quotes, Python dict syntax, markdown, or code fences.\n"
+        "Do NOT add any explanations or extra text.\n"
+        f"Job Description Text:\n{jd_text}\n\n"
         f"Resume Text:\n{text}\n\n"
-        "Example output:\n"
-        "{\n"
-        "  'name': 'John Doe',\n"
-        "  'contact': {'email': 'john@example.com', 'phone': '+123456789', 'linkedin': 'linkedin.com/in/johndoe'},\n"
-        "  'summary': 'Experienced backend developer...',\n"
-        "  'education': ['B.Sc Computer Science, XYZ University, 2018'],\n"
-        "  'experiences': ['Software Engineer at ABC Corp (2018-2021)', 'Intern at DEF Inc (2017-2018)'],\n"
-        "  'skills': ['Python', 'FastAPI', 'Docker'],\n"
-        "  'certifications': ['AWS Certified Developer'],\n"
-        "  'projects': ['Real-time chat app', 'Inventory system'],\n"
-        "  'experienceRelevanceScore': 8.5,\n"
-        "  'seniorityLevel': 'Mid-level Developer',\n"
-        "  'careerTrajectory': 'Intern → Junior Developer → Mid-level Developer',\n"
-        "  'experienceHighlights': ['Led migration to microservices', 'Implemented CI/CD pipelines'],\n"
-        "  'impactHighlights': ['Increased uptime by 20%', 'Cut API response time in half'],\n"
-        "  'projectHighlights': ['Designed scalable chat service', 'Optimized database queries'],\n"
-        "  'atsCompatibilityScore': 7.9,\n"
-        "}"
+        
     )
-
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0,
-        max_tokens=600,
-    )
-
-    result_str = response.choices[0].message.content.strip()
+    
     try:
-        result_dict = ast.literal_eval(result_str)
-    except Exception:
-        result_dict = {}
-    return result_dict
+        response = await client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.0,
+            max_tokens=850
+        )
 
+        content = response.choices[0].message.content
+        result_str = clean_gpt_output(content)
+        print("cleaned gpt output: ", result_str)
+        result_dict = json.loads(result_str)
+        response_cache[cache_key] = result_dict
+        return result_dict
 
-def extract_keywords(text: str) -> list:
-    prompt = (
-        "Extract the key technical and professional keywords from this text. Max keywords: 15.\n"
-        "Return a Python list of keywords, no extra text.\n\n"
-        f"Text:\n{text}"
-    )
-
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0,
-        max_tokens=150,
-    )
-
-    keywords_str = response.choices[0].message.content.strip()
-    try:
-        keywords = ast.literal_eval(keywords_str)
+    except json.JSONDecodeError as e:
+        print("JSON parsing error:", e)
+        print("Raw GPT content (truncated):", content[:500])
+        return {}
     except Exception as e:
-        keywords = []
-    return keywords
+        print("OpenAI error:", e)
+        return {}

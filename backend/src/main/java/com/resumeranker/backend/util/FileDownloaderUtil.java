@@ -23,7 +23,8 @@ public class FileDownloaderUtil {
             try (ClassicHttpResponse response = client.executeOpen(null, request, null)) {
                 int status = response.getCode();
                 if (status >= 200 && status < 300) {
-                    return response.getEntity().getContent();
+                    byte[] fileBytes = response.getEntity().getContent().readAllBytes();
+                    return new java.io.ByteArrayInputStream(fileBytes);
                 } else {
                     throw new IOException("Failed to download file: " + status);
                 }
