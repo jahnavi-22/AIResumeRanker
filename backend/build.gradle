@@ -42,5 +42,5 @@ tasks.named('test') {
 }
 
 springBoot {
-	mainClass = 'com.resumeranker.ResumeBackendApplication'
+    mainClass = 'com.resumeranker.backend.ResumeBackendApplication'
 }
