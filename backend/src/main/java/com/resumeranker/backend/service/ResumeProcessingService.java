@@ -23,7 +23,7 @@ public class ResumeProcessingService {
     private final Map<String, List<ResumeResponse>> jobResults = new HashMap<>();
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private final String mlServiceUrl = "http://localhost:8000/rank";
+    private final String mlServiceUrl = "https://skill-quest-python-service.onrender.com/";
 
     public List<ResumeResponse> process(ResumeRequest request) throws TikaException, IOException {
         String jdText = extractJobDescription(request);
