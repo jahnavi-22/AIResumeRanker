@@ -1,8 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from typing import List
-from app.model import ResumeRequest, ResumeResponse
+from model import ResumeRequest, ResumeResponse
 import asyncio
-import app.extractor as extractor
+import extractor as extractor
 import time
 
 app = FastAPI()
