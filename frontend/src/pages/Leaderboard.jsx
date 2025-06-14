@@ -1,10 +1,10 @@
-import React from "react";
 import { useLocation } from "react-router-dom";
 import ResumeCard from "../components/ResumeCard";
 import Stars from "../components/Stars";
 import Clouds from "../components/Clouds";
 import { saveAs } from "file-saver";
 import "./Leaderboard.css";
+import toast from "react-hot-toast";
 
 const Leaderboard = () => {
   const { state } = useLocation();
@@ -14,12 +14,12 @@ const Leaderboard = () => {
   //download results
   const handleDownload = async () => {
     try {
-      const res = await fetch(`http://localhost:8080/api/resume/download?jobId=${jobId}`);
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/resume/download?jobId=${jobId}`);
       if (!res.ok) throw new Error("Download failed");
       const blob = await res.blob();
       saveAs(blob, `Results-ID-${jobId}.pdf`);
     } catch (err) {
-      alert(err.message);
+      toast.error("Results could not be downloaded. Try again!");
     }
   };
 
@@ -32,7 +32,7 @@ const Leaderboard = () => {
 
       <header className="app-header">
         <h1>Leaderboard</h1><br /><br />
-        <p className="subtitle">Quest #{jobId}: The arena’s verdict. Full ranking below.</p><br />
+        <p className="subtitle">Your Quest: The arena’s verdict. Full ranking below.</p><br />
       </header>
 
       <main className="main-content">
