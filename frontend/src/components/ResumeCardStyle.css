@@ -25,36 +25,26 @@
   gap: 1rem;
   align-items: center;
   padding: 0;
+  min-width: 750px;
 }
 
-.header-column {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.column-title {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin: 0;
+.rank,
+.name,
+.score {
+  padding: 0.5rem;
+  word-break: break-word;
 }
 
 .rank {
   font-size: 1.25rem;
   font-weight: bold;
   color: var(--primary-color);
-  padding: 0.5rem;
 }
 
 .name {
   font-size: 1.1rem;
   font-weight: 500;
   color: var(--text-primary);
-  word-break: break-word;
-  padding: 0.5rem;
 }
 
 .score {
@@ -64,7 +54,6 @@
   border-radius: 1rem;
   font-weight: 500;
   text-align: center;
-  display: inline-block;
 }
 
 .expand-button {
@@ -96,13 +85,13 @@
 
 .expandable-section::-webkit-scrollbar {
   width: 8px;
+  display: none;
 }
 
 .expandable-section::-webkit-scrollbar-thumb {
   background-color: var(--primary-color);
   border-radius: 4px;
 }
-
 
 .nested-expandable {
   margin-bottom: 1.5rem;
@@ -114,7 +103,6 @@
   margin-bottom: 0.5rem;
   color: #1e40af;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
   border-bottom: 2px solid #3b82f6;
   padding-bottom: 0.15rem;
 }
@@ -134,19 +122,25 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
-  max-height: 100px;
+  height: 100px;
   overflow-y: auto;
   padding: 0.5rem;
   border-radius: 0.5rem;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
 .skills-column::-webkit-scrollbar {
-  width: 4px;
+  display: none;
 }
+
+
 
 .skills-column::-webkit-scrollbar-thumb {
   background-color: var(--primary-color);
   border-radius: 2px;
+  display: none;
 }
 
 .skill-tag {
@@ -171,4 +165,38 @@
   box-shadow: 2px 2px 0 #000;
 }
 
+@media (max-width: 768px) {
+  .header-grid {
+    grid-template-columns: repeat(6, minmax(60px, 1fr));
+    font-size: 0.75rem;
+    overflow-x: auto;
+  }
 
+  .rank,
+  .name,
+  .score {
+    font-size: 0.9rem;
+  }
+
+  .expand-button {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .header-grid {
+    grid-template-columns: repeat(6, minmax(50px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .rank,
+  .name,
+  .score {
+    font-size: 0.75rem;
+  }
+
+  .expand-button {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.6rem;
+  }
+}

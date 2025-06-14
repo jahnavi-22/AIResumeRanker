@@ -35,9 +35,9 @@ function App() {
 
     // Handle clicks
     window.addEventListener("click", (e) => {
-      if (e.target.closest('button') || e.target.closest('[role="button"]') || 
-          e.target.closest('input[type="file"]') || e.target.closest('input[type="radio"]') ||
-          e.target.closest('label:has(input[type="radio"])') || e.target.closest('.pixel-btn')) {
+      if (e.target.closest('button') || e.target.closest('[role="button"]') ||
+        e.target.closest('input[type="file"]') || e.target.closest('input[type="radio"]') ||
+        e.target.closest('label:has(input[type="radio"])') || e.target.closest('.pixel-btn')) {
         clickSound.currentTime = 0;
         clickSound.play();
       }

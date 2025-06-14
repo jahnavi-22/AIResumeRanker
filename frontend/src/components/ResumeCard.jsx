@@ -33,8 +33,8 @@ const ResumeCard = ({ result }) => {
       content === null || content === undefined || content === ""
         ? "Not provided"
         : Array.isArray(content)
-        ? content.join("\n")
-        : String(content);
+          ? content.join("\n")
+          : String(content);
 
     return (
       <div className="nested-expandable">
@@ -92,21 +92,25 @@ const ResumeCard = ({ result }) => {
 
       {expanded && (
         <div className="expandable-section">
-                  {renderSection("Summary", result.summary)}
-                  {renderSection("Experience Highlights", result.experienceHighlights)}
-                  {renderSection("Impact Highlights", result.impactHighlights)}
-                  {renderSection("Experiences", result.experiences)}
-                  {renderSection("Projects", result.projects)}
-                  {renderSection("Project Highlights", result.projectHighlights)}
-                  {renderSkillSection("Skills", result.skills)}
-                  {renderSection("Certifications", result.certifications)}
-                  {renderSection("Education", result.education)}
-                  {renderSection("Seniority Level", result.seniorityLevel)}
-                  {renderSection("Career Trajectory", result.careerTrajectory)}
-                  {renderSection("Experience Relevance Score", result.experienceRelevanceScore)}
-                  {renderSection("ATS Compatibility Score", result.atsCompatibilityScore)}
-                  {renderSection("Contact", result.contact)}
-                </div>
+          {renderSection("Summary", result.summary)}
+          {renderSection("Experience Highlights", result.experienceHighlights)}
+          {renderSection("Impact Highlights", result.impactHighlights)}
+          {renderSection("Experiences", result.experiences)}
+          {renderSection("Projects", result.projects)}
+          {renderSection("Project Highlights", result.projectHighlights)}
+          {renderSkillSection("Skills", result.skills)}
+          {renderSection("Certifications", result.certifications)}
+          {renderSection("Education", result.education)}
+          {renderSection("Seniority Level", result.seniorityLevel)}
+          {renderSection("Career Trajectory", result.careerTrajectory)}
+          {renderSection("Experience Relevance Score", typeof result.experienceRelevanceScore === "number"
+            ? `${result.experienceRelevanceScore}/10`
+            : result.experienceRelevanceScore)}
+          {renderSection("ATS Compatibility Score", typeof result.atsCompatibilityScore === "number"
+            ? `${result.atsCompatibilityScore}/10`
+            : result.atsCompatibilityScore)}
+          {renderSection("Contact", result.contact)}
+        </div>
       )}
     </div>
   );

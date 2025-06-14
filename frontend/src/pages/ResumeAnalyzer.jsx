@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { nanoid } from 'nanoid';
 import toast from "react-hot-toast";
 import validUrl from 'valid-url';
 import Stars from "../components/Stars";
@@ -10,12 +11,11 @@ import "./ResumeAnalyzer.css";
 const ResumeAnalyzer = () => {
   const navigate = useNavigate();
 
-  const [jobId, setJobId] = useState("");
+  const [jobId] = useState(nanoid(8));
 
   const [jdType, setJdType] = useState({ type: "file", text: "", file: null, url: "" });
   const [resumeType, setResumeType] = useState({ type: "file", files: [], urls: [""] });
 
-  //   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const MAX_FILE_SIZE_MB = 1;
@@ -94,12 +94,6 @@ const ResumeAnalyzer = () => {
   // let user submit only if passes these checks
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!jobId.trim()) {
-      toast.error("Please enter a Job ID.");
-      return;
-    }
-
 
     //mandatory check for jd
     const isJdProvided =
@@ -198,22 +192,9 @@ const ResumeAnalyzer = () => {
 
       <main className="blue-content">
         <form onSubmit={handleSubmit} className="upload-form">
-          <div className="form-group">
-            <label htmlFor="jobId" className="form-label">
-              Job ID
-            </label>
-            <input
-              id="jobId"
-              type="text"
-              value={jobId}
-              onChange={(e) => setJobId(e.target.value)}
-              className="form-input"
-              placeholder="Enter Job ID"
-            />
-          </div>
 
           <div className="form-group">
-            <label className="form-label">Job Description</label>
+            <label className="form-label">Job Description</label><br />
             <div>
               <label><input type="radio" value="text" checked={jdType.type === "text"} onChange={() => handleJdTypeChange("text")} /> Text</label>
               <label><input type="radio" value="file" checked={jdType.type === "file"} onChange={() => handleJdTypeChange("file")} /> File</label>
@@ -222,11 +203,11 @@ const ResumeAnalyzer = () => {
 
             {jdType.type === "text" && (<textarea value={jdType.text} onChange={handleJdTextChange} className="form-input" />)}
             {jdType.type === "file" && (<input type="file" accept=".pdf,.doc,.docx,.txt" onChange={handleJdFileChange} className="form-input pixel-btn" title="Max size: 1 MB" />)}
-            {jdType.type === "url" && (<input type="text" value={jdType.url} onChange={handleJdUrlChange} className="form-input retro-file" />)}
+            {jdType.type === "url" && (<input type="text" value={jdType.url} onChange={handleJdUrlChange} className="form-input" />)}
           </div>
 
           <div className="form-group">
-            <label className="form-label">Resumes</label>
+            <label className="form-label">Resumes</label><br />
             <div>
               <label><input type="radio" value="file" checked={resumeType.type === "file"} onChange={() => handleResumeTypeChange("file")} /> Files</label>
               <label><input type="radio" value="url" checked={resumeType.type === "url"} onChange={() => handleResumeTypeChange("url")} /> URLs</label>
@@ -251,12 +232,14 @@ const ResumeAnalyzer = () => {
 
             {resumeType.type === "url" && (
               <>
-                {resumeType.urls.map((url, idx) => (
-                  <div key={idx} className="resume-url-container">
-                    <input type="text" value={url} onChange={(e) => handleResumeUrlChange(e, idx)} className="form-input" placeholder={`Resume URL ${idx + 1}`} />
-                    <button type="button" className="remove-btn" onClick={() => removeResumeUrl(idx)} aria-label="Remove URL" > × </button>
-                  </div>
-                ))}
+                <div className="url-list-scrollable">
+                  {resumeType.urls.map((url, idx) => (
+                    <div key={idx} className="resume-url-container">
+                      <input type="text" value={url} onChange={(e) => handleResumeUrlChange(e, idx)} className="form-input" placeholder={`Resume URL ${idx + 1}`} />
+                      <button type="button" className="remove-btn" onClick={() => removeResumeUrl(idx)} aria-label="Remove URL" > × </button>
+                    </div>
+                  ))}
+                </div>
                 <button type="button" className="add-url-btn" onClick={addResumeUrl}>+ Add URL </button>
               </>
             )}

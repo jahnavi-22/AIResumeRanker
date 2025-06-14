@@ -1,4 +1,3 @@
-import React from "react";
 import cloud from "../assets/cloud.png";
 
 const Clouds = () => {

@@ -11,7 +11,7 @@ const Leaderboard = () => {
   const { jobId, results } = state || {};
 
 
-//download results
+  //download results
   const handleDownload = async () => {
     try {
       const res = await fetch(`http://localhost:8080/api/resume/download?jobId=${jobId}`);
@@ -26,38 +26,41 @@ const Leaderboard = () => {
 
   return (
     <div className="app-container">
-      <Stars/>
+      <Stars />
       <Clouds />
       <div className="grass"></div>
 
       <header className="app-header">
-        <h1>Leaderboard</h1><br/><br/>
-        <p className="subtitle">Quest #{jobId}: The arena’s verdict. Full ranking below.</p><br/>
+        <h1>Leaderboard</h1><br /><br />
+        <p className="subtitle">Quest #{jobId}: The arena’s verdict. Full ranking below.</p><br />
       </header>
 
       <main className="main-content">
-          <div className="blue-table">
-            <div className="results-grid">
-              <div className="results-header">
-                <span className="header-details">Rank</span>
-                <span className="header-details">Name</span>
-                <span className="header-details">Hits</span>
-                <span className="header-details">Misses</span>
-                <span className="header-details">Score</span>
-                <span className="header-details">Details</span>
-              </div>
-              <div className="results-scroll-container">
+        <div className="blue-table">
+          <div className="results-grid">
+            <div className="results-scroll-wrapper">
+              <div className="results-table">
+                <div className="results-header">
+                  <span className="header-details">Rank</span>
+                  <span className="header-details">Name</span>
+                  <span className="header-details">Hits</span>
+                  <span className="header-details">Misses</span>
+                  <span className="header-details">Score</span>
+                  <span className="header-details">Details</span>
+                </div>
                 {results?.map((result, index) => (
                   <ResumeCard key={index} result={result} />
                 ))}
               </div>
             </div>
           </div>
-          <div className="download-button-container">
-              <button className="download-button" onClick={handleDownload}>
-                Download Results PDF
-              </button>
-          </div>
+
+        </div>
+        <div className="download-button-container">
+          <button className="download-button" onClick={handleDownload}>
+            Download Results PDF
+          </button>
+        </div>
       </main>
     </div>
   );
