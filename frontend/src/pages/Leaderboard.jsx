@@ -32,7 +32,7 @@ const Leaderboard = () => {
 
       <header className="app-header">
         <h1>Leaderboard</h1><br /><br />
-        <p className="subtitle">Your Quest: The arena’s verdict. Full ranking below.</p><br />
+        <p className="subtitle">Your Quest. The arena’s verdict. Full ranking below.</p><br />
       </header>
 
       <main className="main-content">

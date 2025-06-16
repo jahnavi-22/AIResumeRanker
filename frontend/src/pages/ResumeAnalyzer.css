@@ -263,3 +263,21 @@ button.add-url-btn:hover {
 .remove-btn:hover {
   color: red;
 }
+
+.submit-button {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+
+@media (max-width: 600px) {
+  .upload-form {
+    padding: 2vh;
+  }
+
+  .submit-button {
+    padding: 2vh;
+    font-size: 1.2vh;
+  }
+}
